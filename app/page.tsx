@@ -13,7 +13,7 @@ export default function Skynetic() {
   const router = useRouter();
 
   const handleGoogleClick = () => {
-    router.push("/skynetic/home"); // 👉 Redirect to Home page
+    router.push("/skynetic/preboarding"); // 👉 Redirect to Home page
   };
 
   return (
