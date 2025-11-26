@@ -1,65 +1,99 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { FcGoogle } from "react-icons/fc";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import { useRouter } from "next/navigation";
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+export default function Skynetic() {
+  const router = useRouter();
+
+  const handleGoogleClick = () => {
+    router.push("/skynetic/home"); // 👉 Redirect to Home page
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main
+      className={`
+        ${jakarta.className}
+        min-h-screen
+        bg-[#000000]     /* Pure black */
+        flex
+        items-center
+        justify-center
+        p-4 md:p-10
+      `}
+    >
+      <div className="flex flex-col items-center text-center w-full max-w-[520px]">
+
+        {/* TITLE */}
+        <h1
+          className="
+            text-4xl md:text-6xl
+            font-extrabold
+            text-white
+            tracking-[0.28em]
+            mb-6
+            drop-shadow-[0_4px_15px_rgba(255,255,255,0.25)]
+          "
+        >
+          SKYNETIC
+        </h1>
+
+        {/* LOGO */}
+        <img
+          src="/images/skynetic.jpg"
+          alt="Skynetic Logo"
+          className="
+            w-[150px] md:w-[210px]
+            h-auto
+            opacity-100
+            mb-8
+            transition-all
+          "
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* SUBTITLE */}
+        <p
+          className="
+            text-gray-300
+            text-base md:text-lg
+            tracking-wide
+            mb-12
+            leading-relaxed
+          "
+        >
+          Evolve Beyond Boundaries
+        </p>
+
+        {/* GOOGLE BUTTON */}
+        <button
+          onClick={handleGoogleClick}
+          className="
+            flex items-center gap-3
+            bg-white text-black
+            py-3 md:py-4
+            px-6 md:px-10
+            rounded-2xl
+            font-semibold
+            text-lg md:text-xl
+            shadow-[0_0_25px_rgba(255,255,255,0.25)]
+            hover:shadow-[0_0_45px_rgba(255,255,255,0.45)]
+            transition-all duration-300
+            active:scale-95
+            backdrop-blur-xl
+            border border-white/10
+          "
+        >
+          <FcGoogle size={30} />
+          Sign up with Google
+        </button>
+
+      </div>
+    </main>
   );
 }
