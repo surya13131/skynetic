@@ -44,18 +44,15 @@ const primaryButton =
 export default function LiveInterviewPage() {
   const router = useRouter();
 
-  // --- STATE ---
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [time, setTime] = useState(0);
   const [micEnabled, setMicEnabled] = useState(false);
   const [camEnabled, setCamEnabled] = useState(false);
 
-  // --- REFS ---
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null); // Use NodeJS.Timeout for better type safety
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // --- DATA ---
   const currentQuestion = "Tell me about yourself and your background.";
   const questionProgress = 1;
   const totalQuestions = 5;
@@ -67,19 +64,14 @@ export default function LiveInterviewPage() {
     "Stay calm and confident.",
   ];
 
-  /* ---------------------------------------------------
-    START INTERVIEW (Webcam Initialization)
-  --------------------------------------------------- */
+  /* ---------------- START INTERVIEW ---------------- */
   const startInterview = async () => {
     try {
-      console.log("Requesting camera & mic...");
-      // 1. Get media stream
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
 
-      console.log("Camera permission granted.");
       streamRef.current = stream;
 
       if (videoRef.current) {
@@ -87,116 +79,77 @@ export default function LiveInterviewPage() {
         videoRef.current.muted = true;
         videoRef.current.playsInline = true;
 
-        // 2. Define recursive play function to defeat autoplay blockers
-        const tryPlay = () => {
-          videoRef.current
-            ?.play()
-            .then(() => console.log("Video playing successfully"))
-            .catch((e) => {
-              // Only retry on generic autoplay block errors
-              if (e.name !== "NotAllowedError" && e.name !== "AbortError") {
-                console.warn("Autoplay blocked. Retrying in 200ms...");
-                timerRef.current = setTimeout(tryPlay, 200); // Use timerRef to hold play retry timeout
-              } else {
-                console.error("Video play error (Permission/Abort):", e.name, e.message);
-              }
-            });
-        };
-
-        // 3. Start playback attempt when metadata is loaded or immediately if ready
-        const startPlayback = () => {
-            console.log("Metadata loaded. Initiating playback.");
-            tryPlay();
-        }
-
-        if (videoRef.current.readyState >= 2) {
-             startPlayback();
-        } else {
-             videoRef.current.onloadedmetadata = startPlayback;
-        }
+        await videoRef.current.play().catch((err) => console.error(err));
       }
 
       setIsInterviewStarted(true);
       setMicEnabled(true);
       setCamEnabled(true);
 
-      // Start the main interview timer
-      timerRef.current = setInterval(() => {
-        setTime((t) => t + 1);
-      }, 1000);
+      timerRef.current = setInterval(() => setTime((t) => t + 1), 1000);
     } catch (err) {
       console.error(err);
-      alert(
-        "Camera & Microphone permissions are required! Please check your browser settings."
-      );
+      alert("Camera & microphone permissions are required!");
     }
   };
 
-  /* ---------------------------------------------------
-    STOP INTERVIEW
-  --------------------------------------------------- */
+  /* ---------------- STOP INTERVIEW ---------------- */
   const stopInterview = () => {
     setIsInterviewStarted(false);
     setMicEnabled(false);
     setCamEnabled(false);
 
-    // Clear main timer and video retry timer
-    if (timerRef.current) clearInterval(timerRef.current as NodeJS.Timeout);
+    if (timerRef.current) clearInterval(timerRef.current);
     setTime(0);
 
-    // Stop all media tracks
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
 
-    // Navigate to final page
     router.push("/skynetic/final");
   };
 
-  /* ---------------------------------------------------
-    TOGGLE CONTROLS
-  --------------------------------------------------- */
+  /* ---------------- TOGGLE MIC ---------------- */
   const toggleMic = () => {
     if (!streamRef.current) return;
-    streamRef.current.getAudioTracks().forEach((track) => {
-      track.enabled = !track.enabled;
-      setMicEnabled(track.enabled);
-    });
+    const audioTracks = streamRef.current.getAudioTracks();
+    if (!audioTracks.length) return;
+
+    const enabled = !audioTracks[0].enabled;
+    audioTracks.forEach((track) => (track.enabled = enabled));
+    setMicEnabled(enabled);
   };
 
+  /* ---------------- TOGGLE CAMERA ---------------- */
   const toggleCam = () => {
     if (!streamRef.current) return;
-    streamRef.current.getVideoTracks().forEach((track) => {
-      track.enabled = !track.enabled;
-      setCamEnabled(track.enabled);
-    });
+    const videoTracks = streamRef.current.getVideoTracks();
+    if (!videoTracks.length) return;
+
+    const enabled = !videoTracks[0].enabled;
+    videoTracks.forEach((track) => (track.enabled = enabled));
+    setCamEnabled(enabled);
   };
 
-  /* ---------------------------------------------------
-    CLEANUP
-  --------------------------------------------------- */
+  /* ---------------- CLEANUP ---------------- */
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current as NodeJS.Timeout);
+      if (timerRef.current) clearInterval(timerRef.current);
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
       }
     };
   }, []);
 
-  /* ---------------------------------------------------
-    UTILITY
-  --------------------------------------------------- */
+  /* ---------------- FORMAT TIME ---------------- */
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
 
-  /* ---------------------------------------------------
-    UI RENDER
-  --------------------------------------------------- */
+  /* ---------------- UI ---------------- */
   return (
     <div
       className={`
@@ -219,42 +172,37 @@ export default function LiveInterviewPage() {
         </div>
       </header>
 
-      {/* BODY GRID */}
+      {/* BODY */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-10">
-        
         {/* VIDEO SECTION */}
         <div className="xl:col-span-2 flex flex-col items-center">
           <div
-            className={`
-              ${ultraGlass}
-              w-full 
-              aspect-video 
-              rounded-3xl 
-              mb-8 
-              border-2 
-              border-white/40 
-              overflow-hidden 
-              bg-black 
-            `}
+            className={`relative ${ultraGlass} w-full aspect-video rounded-3xl mb-8 border-2 border-white/40 overflow-hidden bg-black flex items-center justify-center`}
           >
-            {isInterviewStarted ? (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-gray-500 text-xl sm:text-2xl">
-                  Click "Start Interview" to begin
-                </span>
-              </div>
+            {/* 🔥 ALWAYS RENDER VIDEO TAG */}
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: camEnabled && isInterviewStarted ? "block" : "none",
+              }}
+            />
+
+            {!isInterviewStarted && (
+              <span className="absolute text-gray-500 text-xl sm:text-2xl">
+                Click "Start Interview" to begin
+              </span>
+            )}
+
+            {isInterviewStarted && !camEnabled && (
+              <span className="absolute text-gray-500 text-xl sm:text-2xl">
+                Camera is off
+              </span>
             )}
           </div>
 
@@ -282,7 +230,7 @@ export default function LiveInterviewPage() {
               {camEnabled ? <Video /> : <VideoOff className="text-red-500" />}
             </button>
 
-            {/* START/STOP BUTTON */}
+            {/* START / STOP BUTTON */}
             {!isInterviewStarted ? (
               <button onClick={startInterview} className={primaryButton}>
                 <ChevronsRight className="w-5 h-5 mr-2 inline-block" />
