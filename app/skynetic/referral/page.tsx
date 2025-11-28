@@ -1,123 +1,137 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronLeft, FileText, CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export default function ReferralDashboard() {
-  const jobs = [
-    {
-      title: "Senior Frontend Developer",
-      company: "Google Inc.",
-      salary: "$120k–$180k",
-      applicants: "234 applicants",
-      referrer: "Sarah Johnson",
-      initial: "S",
-    },
-    {
-      title: "Full Stack Engineer",
-      company: "Microsoft",
-      salary: "$110k–$150k",
-      applicants: "190 applicants",
-      referrer: "Daniel Roberts",
-      initial: "D",
-    },
-    {
-      title: "Backend Developer",
-      company: "Amazon",
-      salary: "$115k–$160k",
-      applicants: "310 applicants",
-      referrer: "Priya Sharma",
-      initial: "P",
-    },
-    {
-      title: "UI/UX Designer",
-      company: "Adobe",
-      salary: "$90k–$140k",
-      applicants: "142 applicants",
-      referrer: "Keerthana Devi",
-      initial: "K",
-    },
-    {
-      title: "AI Research Engineer",
-      company: "OpenAI",
-      salary: "$150k–$220k",
-      applicants: "89 applicants",
-      referrer: "Michael Lee",
-      initial: "M",
-    },
-  ];
+// Font
+const fontClass = "font-sans";
+
+// Skill bar component
+const SkillBar = ({ skill, percentage }) => {
+  return (
+    <div className="mb-4">
+      <div className="flex justify-between items-center mb-1">
+        <span className="font-semibold text-gray-800">{skill}</span>
+        <span className="text-sm font-medium text-gray-600">{percentage}%</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div
+          className="h-2.5 rounded-full bg-[#5b4baf] transition-all duration-700 ease-out"
+          style={{ width: `${percentage}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
+
+export default function ResumeAnalysisPage() {
+  const router = useRouter();
+
+  // Mock data
+  const analysisData = {
+    matchPercentage: 94,
+    skills: [
+      { skill: "Java", percentage: 70 },
+      { skill: "Python", percentage: 70 },
+      { skill: "React.js", percentage: 70 },
+    ],
+  };
+
+  const [resumeUploaded, setResumeUploaded] = useState(true); // Mock uploaded state
 
   return (
-    <div className="w-full min-h-screen bg-white p-6 flex flex-col items-center">
+    <div
+      className={`${fontClass} min-h-screen w-full bg-gradient-to-br from-[#ebe7ff] via-[#f5f3ff] to-white text-gray-900 flex justify-center py-10 px-4 sm:px-6`}
+    >
+      <div className="w-full max-w-[1600px]"> {/* Full width for desktop */}
 
-      {/* ---------------- HEADER BOX ---------------- */}
-      <div className="w-full bg-black text-white rounded-xl p-12 text-center">
-        <h1 className="text-2xl font-bold mb-2">Get Referral Today!</h1>
-        <p className="text-sm opacity-80 mb-2">
-          Referrals increase your hiring chances by 10x
-        </p>
-        <p className="text-sm opacity-80 mb-8">
-          Ask your network for a referral to your dream job
-        </p>
-
-        <button className="px-12 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition">
-          Request Referral
-        </button>
-      </div>
-
-      {/* ---------------- JOB LIST ---------------- */}
-      <div className="w-full mt-12 space-y-8">
-
-        {jobs.map((job, index) => (
-          <div
-            key={index}
-            className="w-full border rounded-xl p-8 shadow-sm flex justify-between items-center"
+        {/* HEADER / BACK BUTTON */}
+        <div className="mb-12">
+          {/* Back Button at top */}
+          <button
+            onClick={() => router.push("/skynetic/resume")}
+            className="flex items-center text-lg sm:text-xl font-semibold text-gray-600 hover:text-[#5b4baf] transition duration-150 p-4 sm:p-5 rounded-md"
           >
-            {/* Job Details */}
-            <div className="text-left">
-              <h2 className="font-semibold text-xl">{job.title}</h2>
-              <p className="text-gray-800">{job.company}</p>
-              <p className="font-medium mt-1">{job.salary}</p>
-              <p className="text-sm text-gray-600 mt-1">{job.applicants}</p>
-            </div>
+            <ChevronLeft className="w-6 h-6 mr-2" />
+            Back
+          </button>
 
-            {/* Referrer */}
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-gray-900 text-white flex items-center justify-center text-2xl font-bold">
-                {job.initial}
-              </div>
-
-              <p className="mt-3 text-sm font-semibold">{job.referrer}</p>
-
-              <div className="flex gap-4 mt-4">
-                <button className="px-5 py-2 border rounded-full text-sm hover:bg-gray-100">
-                  View Details
-                </button>
-                <button className="px-5 py-2 border rounded-full text-sm hover:bg-gray-100">
-                  Send Thanks
-                </button>
-              </div>
-            </div>
+          {/* Heading and description below */}
+          <div className="mt-6 sm:mt-10 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#26215f]">
+              Resume Analysis
+            </h1>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">
+              Upload your resume to get started
+            </p>
           </div>
-        ))}
+        </div>
+{/* RESUME UPLOAD STATUS CARD */}
+<motion.div
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.5 }}
+  className="w-full max-w-md mx-auto bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200 shadow-xl p-6 sm:p-10 text-center"
+>
+  {resumeUploaded ? (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3 }}
+    >
+      <CheckCircle className="w-14 h-14 sm:w-16 sm:h-16 text-green-500 mx-auto mb-4" />
+      <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+        Resume Uploaded Successfully
+      </h2>
+      <p className="text-gray-500 mt-1 text-sm sm:text-base">Analyzing your skills...</p>
+    </motion.div>
+  ) : (
+    <div>
+      <FileText className="w-14 h-14 sm:w-16 sm:h-16 text-[#5b4baf] mx-auto mb-4" />
+      <h2 className="text-lg sm:text-xl font-bold text-gray-800">Upload Your Resume</h2>
+      <button className="mt-4 px-6 py-2 bg-[#5b4baf] text-white rounded-xl shadow-md hover:bg-[#422f9b] transition">
+        Click to Upload
+      </button>
+    </div>
+  )}
+</motion.div>
 
-        {/* Empty placeholders */}
-        <div className="w-full border rounded-xl h-48"></div>
-        <div className="w-full border rounded-xl h-48"></div>
-      </div>
+{/* SKILLS MATCH ANALYSIS CARD */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.5, duration: 0.5 }}
+  className="w-full max-w-md mx-auto bg-[#ede9ff] rounded-3xl shadow-xl mt-6 p-6 sm:p-8 border border-[#e0d6ff]"
+>
+  <div className="text-center mb-6">
+    <h2 className="text-2xl sm:text-3xl font-extrabold text-[#26215f]">
+      {analysisData.matchPercentage}% Match for this role
+    </h2>
+  </div>
 
-      {/* ---------------- FOOTER TIPS ---------------- */}
-      <div className="w-full mt-12 pb-12 text-sm">
-        <div className="flex justify-between font-semibold mb-4">
-          <p>Pro Tips for Referrals</p>
-          <p>Refer & Earn up to $49</p>
+  <div className="space-y-4">
+    {analysisData.skills.map((skill, index) => (
+      <SkillBar key={index} skill={skill.skill} percentage={skill.percentage} />
+    ))}
+  </div>
+</motion.div>
+
+        {/* ACTION BUTTON */}
+        <div className="mt-8 max-w-lg mx-auto">
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            type="button"
+            onClick={() => router.push("/skynetic/communication")}
+            className="w-full px-6 py-4 bg-[#5b4baf] text-white font-bold text-lg rounded-xl shadow-lg hover:bg-[#422f9b] transition duration-300"
+          >
+            Continue to Communication Round
+          </motion.button>
         </div>
 
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>Personalize each referral request with specific reasons.</li>
-          <li>Keep your profile updated with achievements.</li>
-          <li>Always follow up with a thank-you message.</li>
-          <li>Return the favour by referring others.</li>
-        </ol>
       </div>
     </div>
   );

@@ -250,9 +250,12 @@ export default function JobsPage() {
           </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3 sm:mt-6">
-                  <button className="px-4 sm:px-6 py-2 bg-[#5b4baf] text-white rounded-xl shadow hover:bg-[#422f9b] text-sm sm:text-base w-full sm:w-auto">
-                    Apply Now
-                  </button>
+                 <button
+      onClick={() => router.push("/skynetic/profile")}
+      className="px-4 sm:px-6 py-2 bg-[#5b4baf] text-white rounded-xl shadow hover:bg-[#422f9b] text-sm sm:text-base w-full sm:w-auto"
+    >
+      Apply Now
+    </button>
                   <button className="px-4 sm:px-6 py-2 bg-white/40 text-[#26215f] border border-white/40 rounded-xl hover:bg-white text-sm sm:text-base w-full sm:w-auto backdrop-blur-sm">
                     Save Job
                   </button>

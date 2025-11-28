@@ -1,104 +1,141 @@
 "use client";
 
 import React, { useState } from "react";
-import { AiOutlineUpload } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { Upload, ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
-const skills = [
-  { name: "Java", rating: 4, percent: 70 },
-  { name: "Python", rating: 5, percent: 90 },
-  { name: "React Js", rating: 3, percent: 60 },
-];
+/* Google Fonts */
+import { Inter, Urbanist, Space_Grotesk } from "next/font/google";
 
-const ResumePage: React.FC = () => {
-  const [resumeUploaded, setResumeUploaded] = useState(false);
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+});
+
+const urbanist = Urbanist({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-urbanist",
+});
+
+const grotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-grotesk",
+});
+
+export default function ResumeAnalysis() {
   const router = useRouter();
+  const [file, setFile] = useState<File | null>(null);
 
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setResumeUploaded(true);
+  const handleFile = (e: any) => {
+    const f = e.target.files?.[0];
+    if (f && f.type === "application/pdf") {
+      setFile(f);
+
+      // Wait briefly before redirecting to referral page
+      setTimeout(() => {
+        router.push("/skynetic/referral");
+      }, 800); // 0.8s delay for smooth UX
+    } else {
+      alert("Please upload a PDF file only.");
     }
   };
 
-  const handleStartCVTest = () => {
-    router.push("/skynetic/technical");
-  };
-
   return (
-    <div className="min-h-screen w-full bg-white text-gray-900 flex flex-col items-center p-6 sm:p-12 space-y-6">
-      {/* Main Container */}
-      <div className="w-full max-w-4xl flex flex-col items-center space-y-6">
-        {/* Upload Resume */}
-        <div className="w-full flex flex-col items-center space-y-4">
-          <label className="flex items-center justify-center gap-2 border border-gray-700 rounded-xl py-3 px-6 cursor-pointer hover:bg-gray-100 transition w-full sm:w-auto">
-            <AiOutlineUpload className="w-5 h-5" />
-            <span>Upload Your Resume</span>
-            <input
-              type="file"
-              className="hidden"
-              onChange={handleUpload}
-              accept=".pdf,.doc,.docx"
-            />
+    <div
+      className={`${inter.variable} ${urbanist.variable} ${grotesk.variable} w-full min-h-screen bg-gradient-to-br from-[#f5f0ff] to-[#e8e0ff] px-6 py-10`}
+    >
+      {/* Top Row */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => router.push("/skynetic/profile")}
+          className="p-2 rounded-full hover:bg-white hover:shadow-xl transition-all duration-300 backdrop-blur-md border border-[#c9c3f5]/50"
+        >
+          <ArrowLeft className="w-6 h-6 text-[#26215f]" />
+        </button>
+
+        <h1
+          className="text-3xl font-bold text-[#26215f] tracking-tight"
+          style={{ fontFamily: "var(--font-urbanist)" }}
+        >
+          Resume Analysis
+        </h1>
+      </div>
+
+      {/* Subtitle */}
+      <p
+        className="text-center mt-10 text-gray-700 text-lg"
+        style={{ fontFamily: "var(--font-inter)" }}
+      >
+        Upload your resume to get started
+      </p>
+
+      {/* Upload Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full flex justify-center mt-10"
+      >
+        <div
+          className="w-full max-w-3xl p-10 rounded-3xl 
+          backdrop-blur-xl bg-white/30 border border-white/40 shadow-2xl
+          hover:shadow-[0_10px_50px_rgba(80,70,160,0.2)]
+          transition-all duration-500"
+        >
+          <label
+            htmlFor="resume"
+            className="cursor-pointer flex flex-col justify-center items-center 
+            border-2 border-dashed border-[#26215f]/40 bg-white/50 backdrop-blur-md 
+            rounded-2xl py-20 transition-all duration-300 
+            hover:border-[#26215f] hover:bg-white/70 hover:scale-[1.02]"
+          >
+            <Upload className="w-12 h-12 text-[#26215f] opacity-90" />
+
+            {!file ? (
+              <>
+                <p
+                  className="text-xl font-semibold mt-3 text-[#26215f]"
+                  style={{ fontFamily: "var(--font-urbanist)" }}
+                >
+                  Upload Your Resume
+                </p>
+                <p
+                  className="text-gray-600 text-sm mt-1"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  PDF format only
+                </p>
+              </>
+            ) : (
+              <>
+                <p
+                  className="text-xl font-semibold mt-3 text-[#26215f]"
+                  style={{ fontFamily: "var(--font-urbanist)" }}
+                >
+                  {file.name}
+                </p>
+                <p
+                  className="text-gray-600 text-sm mt-1"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  File uploaded successfully
+                </p>
+              </>
+            )}
           </label>
 
-          {resumeUploaded && (
-            <p className="text-center text-gray-700 font-medium">
-              Your Resume is 76% fit for the role
-            </p>
-          )}
+          <input
+            id="resume"
+            type="file"
+            accept="application/pdf"
+            onChange={handleFile}
+            className="hidden"
+          />
         </div>
-
-        {/* Skill Proficiency */}
-        <div className="w-full bg-gray-50 p-4 rounded-xl shadow-sm">
-          <p className="font-semibold mb-2">Skill Proficiency</p>
-          {skills.map((skill) => (
-            <div
-              key={skill.name}
-              className="flex justify-between items-center mb-1 text-gray-700"
-            >
-              <span>{skill.name}</span>
-              <span>
-                {"★".repeat(skill.rating) + "☆".repeat(5 - skill.rating)} (
-                {skill.percent}%)
-              </span>
-            </div>
-          ))}
-          {resumeUploaded && (
-            <p className="text-center text-gray-700 font-medium mt-2">
-              Your Skills are 76% fit for the role
-            </p>
-          )}
-        </div>
-
-        {/* Start CV Test Button */}
-        <button
-         
-          className="w-full py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition"
-        >
-          Start CV Test
-        </button>
-
-        {/* Animated Video / Case Studies Box */}
-        <div className="w-full h-64 border border-gray-400 rounded-xl flex items-center justify-center text-center p-4">
-          <p>
-            Animated Video <br />
-            Pop Questions Case Studies <br />
-            on Skynetic
-          </p>
-        </div>
-
-        {/* Eligibility */}
-        <p className="text-center font-medium">
-          Congrats! You are Eligible For Communication Round
-        </p>
-
-        {/* Start Communication Button */}
-        <button  onClick={handleStartCVTest} className="w-full py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-800 transition">
-          Start Communication
-        </button>
-      </div>
+      </motion.div>
     </div>
   );
-};
-
-export default ResumePage;
+}
