@@ -14,7 +14,23 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const initialTests = [
+// --- TYPES ---
+type TestStatus = "completed" | "available" | "pending";
+
+type Test = {
+  id: string;
+  icon: React.ElementType; // Icon component
+  title: string;
+  description: string;
+  status: TestStatus;
+};
+
+type TestCardProps = Test & {
+  onStartTest: () => void;
+};
+
+// --- INITIAL DATA ---
+const initialTests: Test[] = [
   { id: "audio", icon: Headphones, title: "Audio System Check", description: "Test your microphone", status: "available" },
   { id: "video", icon: Video, title: "Video System Check", description: "Test your camera", status: "pending" },
   { id: "listening", icon: Volume2, title: "Listening Test", description: "Listen to audio and answer 5 questions.", status: "pending" },
@@ -23,8 +39,9 @@ const initialTests = [
   { id: "grammar", icon: ListChecks, title: "Grammar & Vocabulary", description: "10 grammar & vocabulary questions.", status: "pending" },
 ];
 
-const TestCard = ({ icon: Icon, title, description, status, onStartTest }) => {
-  const cardStyles = {
+// --- TEST CARD COMPONENT ---
+const TestCard: React.FC<TestCardProps> = ({ icon: Icon, title, description, status, onStartTest }) => {
+  const cardStyles: Record<TestStatus, string> = {
     completed: "bg-[#e5ffe5] border-green-200 text-green-700",
     available: "bg-white border-gray-200 text-[#26215f] hover:shadow-md cursor-pointer transition",
     pending: "bg-[#f1eeff] border-gray-200 text-gray-600 opacity-60",
@@ -62,12 +79,13 @@ const TestCard = ({ icon: Icon, title, description, status, onStartTest }) => {
   );
 };
 
+// --- MAIN PAGE ---
 export default function CommunicationRoundPage() {
   const router = useRouter();
-  const [tests, setTests] = useState(initialTests);
+  const [tests, setTests] = useState<Test[]>(initialTests);
   const [showFinish, setShowFinish] = useState(false);
 
-  const handleTestCompletion = (id) => {
+  const handleTestCompletion = (id: string) => {
     let idx = -1;
 
     const updated = tests.map((test, i) => {
@@ -90,25 +108,17 @@ export default function CommunicationRoundPage() {
 
   return (
     <div className="min-h-screen w-full px-5 py-10 bg-gradient-to-br from-[#f0ebff] via-[#faf8ff] to-white">
-
       {/* HEADER / BACK BUTTON */}
       <div className="mb-12">
-        {/* Back Button at top */}
-     {/* Back Button at top */}
-<button
-  onClick={() => router.push("/skynetic/referral")}
-  className="flex items-center text-lg sm:text-xl font-semibold text-gray-600 hover:text-[#5b4baf] transition duration-150 p-3 rounded-md"
->
-  <ChevronLeft className="w-6 h-6 mr-1" />Back
-</button>
+        <button
+          onClick={() => router.push("/skynetic/referral")}
+          className="flex items-center text-lg sm:text-xl font-semibold text-gray-600 hover:text-[#5b4baf] transition duration-150 p-3 rounded-md"
+        >
+          <ChevronLeft className="w-6 h-6 mr-1" />Back
+        </button>
 
-
-
-        {/* Heading and description below */}
         <div className="mt-6 sm:mt-10 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#26215f]">
-            Communication Round
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#26215f]">Communication Round</h1>
           <p className="text-gray-500 mt-2 text-sm sm:text-base">
             Complete the following system and skill checks
           </p>
