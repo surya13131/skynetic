@@ -91,13 +91,13 @@ export default function CommunicationRoundPage() {
     const updated = tests.map((test, i) => {
       if (test.id === id) {
         idx = i;
-        return { ...test, status: "completed" };
+        return { ...test, status: "completed" as TestStatus }; // ✅ Type assertion
       }
       return test;
     });
 
     const next = updated.findIndex((t, i) => i > idx && t.status === "pending");
-    if (next !== -1) updated[next].status = "available";
+    if (next !== -1) updated[next].status = "available" as TestStatus; // ✅ Type assertion
 
     if (updated.every((t) => t.status === "completed")) {
       setShowFinish(true);
