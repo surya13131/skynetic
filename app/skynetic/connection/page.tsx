@@ -8,9 +8,9 @@ const inter = Inter({ subsets: ["latin"], weight: ["300","400","500","600","700"
 const urbanist = Urbanist({ subsets:["latin"], weight:["500","600","700","800"], variable:"--font-urbanist" });
 const grotesk = Space_Grotesk({ subsets:["latin"], weight:["400","500","600","700"], variable:"--font-grotesk" });
 
-// ----------------------
-// FIX TYPE ERROR
-// ----------------------
+// --------------------------------------------------
+// FIX TYPE ISSUE
+// --------------------------------------------------
 
 type TabType = "All Connections" | "Connected" | "Pending" | "Suggested";
 
@@ -43,9 +43,9 @@ export default function NetworkPage() {
     return matchesFilter && matchesQuery;
   });
 
-  // ----------------------
-  // FIXED ICON OBJECT WITH TYPE
-  // ----------------------
+  // --------------------------------------------------
+  // FIXED ICON OBJECT
+  // --------------------------------------------------
 
   const filterIcons: Record<TabType, JSX.Element> = {
     "All Connections": <Users className="w-5 h-5" />,
@@ -73,8 +73,7 @@ export default function NetworkPage() {
       {/* STATS */}
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[{ value: 245, label: "Total Connections" }, { value: 12, label: "Pending Requests" }, 
-          { value: 8, label: "Messages" }, { value: 156, label: "Profile Views" }]
-          .map((stat, i) => (
+          { value: 8, label: "Messages" }, { value: 156, label: "Profile Views" }].map((stat, i) => (
           <div key={i} className="bg-white/40 backdrop-blur-xl shadow-md rounded-2xl 
             p-4 text-center hover:scale-105 transition-all">
             <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
@@ -101,17 +100,17 @@ export default function NetworkPage() {
 
       {/* FILTER BUTTONS */}
       <div className="mt-4 flex flex-wrap gap-3 justify-center">
-        {Object.keys(filterIcons).map((tab, i) => (
+        {(Object.keys(filterIcons) as TabType[]).map((tab) => (
           <button
-            key={i}
-            onClick={() => setFilter(tab as TabType)}
+            key={tab}
+            onClick={() => setFilter(tab)}
             className={`flex flex-col items-center justify-center px-4 py-3 sm:px-6 sm:py-4
               rounded-2xl font-[var(--font-urbanist)] transition-all transform shadow-md
               backdrop-blur-xl border border-white/20
               hover:scale-110 hover:bg-white/50
               ${filter === tab ? "bg-[#5b4baf] text-white shadow-lg" : "bg-white/40 text-gray-800"}`}
           >
-            <div className="mb-1">{filterIcons[tab as TabType]}</div>
+            <div className="mb-1">{filterIcons[tab]}</div>
             <span className="text-xs sm:text-sm font-semibold">{tab}</span>
           </button>
         ))}
