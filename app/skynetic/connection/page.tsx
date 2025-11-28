@@ -39,7 +39,7 @@ export default function NetworkPage() {
   ];
 
   // -------------------------
-  // FIXED STATUS MAP (NO TS ERROR)
+  // STATUS STYLES
   // -------------------------
   const statusStyles: Record<string, string> = {
     connected: "bg-[#ebe4ff] text-[#5b4baf]",
@@ -48,7 +48,7 @@ export default function NetworkPage() {
   };
 
   // -------------------------
-  // FIXED ICON MAP (NO TS ERROR)
+  // ICONS
   // -------------------------
   const filterIcons: Record<TabType, React.ReactNode> = {
     "All Connections": <Users className="w-5 h-5" />,
@@ -57,18 +57,13 @@ export default function NetworkPage() {
     Suggested: <Star className="w-5 h-5" />,
   };
 
-  // FILTER OUTPUT
+  // -------------------------
+  // FILTERED CONNECTIONS
+  // -------------------------
   const filteredConnections = connections.filter((conn) => {
-    const matchesFilter =
-      filter === "All Connections" ? true : conn.status === filter.toLowerCase();
-
+    const matchesFilter = filter === "All Connections" ? true : conn.status === filter.toLowerCase();
     const q = query.toLowerCase();
-
-    const matchesQuery =
-      conn.name.toLowerCase().includes(q) ||
-      conn.company.toLowerCase().includes(q) ||
-      conn.title.toLowerCase().includes(q);
-
+    const matchesQuery = conn.name.toLowerCase().includes(q) || conn.company.toLowerCase().includes(q) || conn.title.toLowerCase().includes(q);
     return matchesFilter && matchesQuery;
   });
 
@@ -77,7 +72,6 @@ export default function NetworkPage() {
       className={`${inter.variable} ${urbanist.variable} ${grotesk.variable} min-h-screen w-full 
       bg-gradient-to-br from-[#f5f3ff] via-[#ece8ff] to-white text-gray-900 px-4 sm:px-6 lg:px-12`}
     >
-
       {/* HEADER */}
       <header className="w-full flex justify-between items-center py-4">
         <div className="flex items-center gap-2 animate-bounce">
@@ -86,7 +80,6 @@ export default function NetworkPage() {
             My Network
           </span>
         </div>
-
         <User className="w-8 h-8 p-1.5 rounded-2xl border border-white/30 backdrop-blur-xl hover:scale-110 transition cursor-pointer" />
       </header>
 
@@ -128,22 +121,24 @@ export default function NetworkPage() {
       </div>
 
       {/* FILTER BUTTONS */}
-      <div className="mt-4 flex flex-wrap gap-3 justify-center">
-        {(Object.keys(filterIcons) as TabType[]).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setFilter(tab)}
-            className={`flex flex-col items-center justify-center px-4 py-3 sm:px-6 sm:py-4
-              rounded-2xl font-[var(--font-urbanist)] transition-all transform shadow-md
-              backdrop-blur-xl border border-white/20
-              hover:scale-110 hover:bg-white/50
-              ${filter === tab ? "bg-[#5b4baf] text-white shadow-lg" : "bg-white/40 text-gray-800"}`}
-          >
-            <div className="mb-1">{filterIcons[tab]}</div>
-            <span className="text-xs sm:text-sm font-semibold">{tab}</span>
-          </button>
-        ))}
-      </div>
+    <div className="mt-4 flex justify-center gap-2 sm:gap-3 flex-wrap">
+  {(Object.keys(filterIcons) as TabType[]).map((tab) => (
+    <button
+      key={tab}
+      onClick={() => setFilter(tab)}
+      className={`flex flex-col items-center justify-center px-2 sm:px-4 py-1.5 sm:py-3
+        rounded-2xl font-[var(--font-urbanist)] transition-all transform shadow-md
+        border border-white/20
+        hover:scale-105 hover:bg-[#5b4baf] hover:text-white
+        ${filter === tab ? "bg-[#5b4baf] text-white shadow-lg" : "bg-white/40 text-gray-800"}
+        min-w-[60px] sm:min-w-[120px]`}
+    >
+      <div className="mb-1">{filterIcons[tab]}</div>
+      <span className="text-[10px] sm:text-sm font-semibold whitespace-nowrap">{tab}</span>
+    </button>
+  ))}
+</div>
+
 
       {/* CONNECTION LIST */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
@@ -157,7 +152,7 @@ export default function NetworkPage() {
                 shadow-md p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center 
                 hover:bg-white hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] transition"
             >
-              {/* LEFT SECTION */}
+              {/* LEFT */}
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <div
                   className="w-12 h-12 bg-[#5b4baf] text-white flex items-center justify-center 
@@ -165,7 +160,6 @@ export default function NetworkPage() {
                 >
                   {conn.name.split(" ").map((n) => n[0]).join("")}
                 </div>
-
                 <div className="truncate max-w-[200px] sm:max-w-[250px]">
                   <h2 className="font-bold text-gray-900 truncate">{conn.name}</h2>
                   <p className="text-sm text-gray-600 truncate">
@@ -178,7 +172,7 @@ export default function NetworkPage() {
                 </div>
               </div>
 
-              {/* RIGHT BUTTONS */}
+              {/* RIGHT */}
               <div className="flex flex-col sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
                 {conn.status === "connected" && (
                   <button
@@ -189,7 +183,6 @@ export default function NetworkPage() {
                     Message
                   </button>
                 )}
-
                 {conn.status === "pending" && (
                   <button
                     className="w-full sm:w-auto px-4 py-2 min-w-[120px] rounded-xl 
@@ -198,12 +191,11 @@ export default function NetworkPage() {
                     Request Sent
                   </button>
                 )}
-
                 {conn.status === "suggested" && (
                   <button
                     className="w-full sm:w-auto px-4 py-2 min-w-[120px] rounded-xl 
                     bg-white/30 backdrop-blur-lg border border-white/30 shadow-md text-[#5b4baf] 
-                    font-[var(--font-urbanist)] hover:bg-white/50 hover:shadow-lg hover:scale-105 transition truncate"
+                    font-[var(--font-urbanist)] hover:bg-[#5b4baf] hover:text-white hover:shadow-lg hover:scale-105 transition truncate"
                   >
                     Connect
                   </button>

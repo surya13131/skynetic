@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-
-/* -------- Lucide Icons -------- */
 import {
   Bell,
   User,
@@ -17,10 +15,7 @@ import {
   MessageCircle,
   UsersRound,
 } from "lucide-react";
-
 import { motion } from "framer-motion";
-
-/* ---------------- GOOGLE FONTS ---------------- */
 import { Inter, Urbanist, Space_Grotesk } from "next/font/google";
 
 const inter = Inter({
@@ -41,12 +36,22 @@ const grotesk = Space_Grotesk({
   variable: "--font-grotesk",
 });
 
-/* ---------------- TYPES ---------------- */
 type TabName = "Jobs" | "Interview" | "Network" | "Learn";
 
 interface TabItem {
   name: TabName;
   icon: any;
+}
+
+interface Job {
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+  type: string;
+  days: string;
+  match: number;
+  recruiter: string;
 }
 
 export default function JobsPage() {
@@ -56,7 +61,6 @@ export default function JobsPage() {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabName>("Jobs");
 
-  /* ----------- FIXED TABS ------------ */
   const tabs: TabItem[] = [
     { name: "Jobs", icon: Briefcase },
     { name: "Interview", icon: MessageCircle },
@@ -64,7 +68,6 @@ export default function JobsPage() {
     { name: "Learn", icon: BookOpen },
   ];
 
-  /* -------- Tab Navigation Routes -------- */
   const tabRoutes: Record<TabName, string | null> = {
     Jobs: "/skynetic/jobs",
     Interview: "/skynetic/interview",
@@ -72,8 +75,7 @@ export default function JobsPage() {
     Learn: null,
   };
 
-  /* ---------------------- JOB DATA -------------------- */
-  const jobs = [
+  const jobs: Job[] = [
     {
       title: "Senior Full Stack Developer",
       company: "Infosys Technologies",
@@ -116,17 +118,14 @@ export default function JobsPage() {
     },
   ];
 
-  /* -------- Detect active tab on load -------- */
   useEffect(() => {
     const found = tabs.find((tab) => {
       const route = tabRoutes[tab.name];
       return route && pathname.includes(route.split("/")[2]);
     });
-
     if (found) setActiveTab(found.name);
   }, [pathname]);
 
-  /* -------- Tab Click Handler -------- */
   const handleTabClick = (tab: TabName) => {
     if (tab === "Learn") {
       setActiveTab("Learn");
@@ -136,16 +135,19 @@ export default function JobsPage() {
     if (route) router.push(route);
   };
 
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(query.toLowerCase()) ||
+      job.company.toLowerCase().includes(query.toLowerCase()) ||
+      job.location.toLowerCase().includes(query.toLowerCase()) ||
+      job.recruiter.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
     <div
-      className={`
-        ${inter.variable} ${urbanist.variable} ${grotesk.variable}
-        min-h-screen w-full
-        bg-gradient-to-br from-[#ebe7ff] via-[#f5f3ff] to-white
-        text-gray-900
-      `}
+      className={`${inter.variable} ${urbanist.variable} ${grotesk.variable} min-h-screen w-full bg-gradient-to-br from-[#ebe7ff] via-[#f5f3ff] to-white text-gray-900`}
     >
-      {/* ---------------- NAVBAR ---------------- */}
+      {/* NAVBAR */}
       <header className="w-full backdrop-blur-2xl bg-white/60 border-b border-white/40 px-4 sm:px-6 py-3 flex justify-between items-center sticky top-0 z-50 shadow-lg shadow-black/5">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -154,7 +156,6 @@ export default function JobsPage() {
         >
           Skynetic
         </motion.h1>
-
         <div className="flex items-center gap-2 sm:gap-4">
           {[Sun, Bell, User, Settings].map((Icon, i) => (
             <motion.div
@@ -168,61 +169,57 @@ export default function JobsPage() {
         </div>
       </header>
 
-{/* ---------------- TABS ---------------- */}
-<nav className="w-full flex justify-around border-b border-white/40 bg-white/40 backdrop-blur-xl px-2 sm:px-6 text-lg font-semibold font-[var(--font-urbanist)]">
-  {tabs.map((tab) => (
-    <button
-      key={tab.name}
-      onClick={() => handleTabClick(tab.name)}
-      className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 transition-all ${
-        activeTab === tab.name
-          ? "border-b-4 border-[#5b4baf] text-[#5b4baf]"
-          : "text-gray-600 hover:text-[#32288a]"
-      }`}
-    >
-      <tab.icon className="w-5 h-5 sm:w-5 sm:h-5" />
-      <span className="text-xs sm:text-base">{tab.name}</span>
-    </button>
-  ))}
-</nav>
+      {/* TABS */}
+      <nav className="w-full flex justify-around border-b border-white/40 bg-white/40 backdrop-blur-xl px-2 sm:px-6 text-lg font-semibold font-[var(--font-urbanist)]">
+        {tabs.map((tab) => (
+          <button
+            key={tab.name}
+            onClick={() => handleTabClick(tab.name)}
+            className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 transition-all ${
+              activeTab === tab.name
+                ? "border-b-4 border-[#5b4baf] text-[#5b4baf]"
+                : "text-gray-600 hover:text-[#32288a]"
+            }`}
+          >
+            <tab.icon className="w-5 h-5 sm:w-5 sm:h-5" />
+            <span className="text-xs sm:text-base">{tab.name}</span>
+          </button>
+        ))}
+      </nav>
 
-      {/* ---------------- SEARCH BAR ---------------- */}
+      {/* SEARCH BAR */}
       {activeTab === "Jobs" && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full px-4 sm:px-6 mt-6 sm:mt-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4"
+          className="w-full px-4 sm:px-6 mt-6 sm:mt-10 flex justify-center"
         >
-          <div className="w-full sm:flex-1 bg-white/40 backdrop-blur-xl border border-white/40 shadow-lg rounded-2xl px-4 py-3 flex items-center gap-2 sm:gap-3 hover:bg-white/70 transition">
+          <div className="w-full sm:w-1/2 bg-white/40 backdrop-blur-xl border border-white/40 shadow-lg rounded-2xl px-4 py-3 flex items-center gap-2 sm:gap-3 hover:bg-white/70 transition">
             <Search className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />
             <input
               type="text"
-              placeholder="Search jobs, companies, or skills..."
+              placeholder="Search jobs, companies, locations, recruiter..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="w-full bg-transparent outline-none text-gray-700 text-sm sm:text-base"
             />
           </div>
-
-          <button className="px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-[#26215f] text-white shadow-md hover:bg-[#1e1a4c] transition text-sm sm:text-base w-full sm:w-auto">
-            Search
-          </button>
         </motion.div>
       )}
 
-      {/* ---------------- JOB LIST ---------------- */}
+      {/* JOB LIST */}
       <div className="px-4 sm:px-6 mt-6 sm:mt-10 flex flex-col gap-6 sm:gap-8 pb-32">
         {activeTab === "Jobs" &&
-          jobs.map((job, i) => (
+          filteredJobs.map((job, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="w-full bg-white/60 backdrop-blur-xl border border-white/40 shadow-xl rounded-3xl p-5 sm:p-8 hover:bg-white transition flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center"
+              className="w-full bg-white/30 backdrop-blur-xl border border-white/20 shadow-lg rounded-3xl p-5 sm:p-8 hover:shadow-2xl hover:scale-105 transition-transform duration-300 flex flex-col sm:flex-row justify-between gap-4 sm:items-center"
             >
               <div className="flex-1 min-w-0">
-                <h2 className="text-xl sm:text-2xl font-bold text-[#24224f] font-[var(--font-grotesk)] truncate">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#26215f] font-[var(--font-grotesk)] truncate">
                   {job.title}
                 </h2>
                 <p className="text-gray-700 mt-1 sm:mt-2 text-sm sm:text-base truncate">
@@ -233,7 +230,6 @@ export default function JobsPage() {
                   <div className="flex items-center gap-1 sm:gap-2">
                     <MapPin className="w-3 sm:w-4 h-3 sm:h-4" /> {job.location}
                   </div>
-                  <div>{job.salary}</div>
                   <div className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full border">
                     {job.type}
                   </div>
@@ -242,28 +238,35 @@ export default function JobsPage() {
                   </div>
                 </div>
 
-                <p className="mt-2 sm:mt-4 text-gray-700 text-xs sm:text-sm truncate">
-                  Recruiter: <b>{job.recruiter}</b>
-                </p>
+                  <div className="mt-2 sm:mt-4 text-gray-700 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center gap-2">
+            <span>
+              Recruiter: <b>{job.recruiter}</b>
+            </span>
+            <div className="w-full sm:w-auto flex justify-center sm:justify-start mt-2 sm:mt-0">
+              <span className="px-3 py-1 sm:px-4 sm:py-2 bg-gradient-to-r from-[#d6c1ff] to-[#5b4baf] text-white text-xs sm:text-sm rounded-full font-bold shadow-md">
+                {job.salary}
+              </span>
+            </div>
+          </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3 sm:mt-6">
-                  <button className="px-4 sm:px-6 py-2 bg-[#26215f] text-white rounded-xl shadow hover:bg-[#1e1a4c] text-sm sm:text-base w-full sm:w-auto">
+                  <button className="px-4 sm:px-6 py-2 bg-[#5b4baf] text-white rounded-xl shadow hover:bg-[#422f9b] text-sm sm:text-base w-full sm:w-auto">
                     Apply Now
                   </button>
-                  <button className="px-4 sm:px-6 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 text-sm sm:text-base w-full sm:w-auto">
+                  <button className="px-4 sm:px-6 py-2 bg-white/40 text-[#26215f] border border-white/40 rounded-xl hover:bg-white text-sm sm:text-base w-full sm:w-auto backdrop-blur-sm">
                     Save Job
                   </button>
                 </div>
               </div>
 
-              {/* -------- MATCH BADGE -------- */}
-              <div className="px-4 py-1 sm:px-6 sm:py-2 bg-[#ebe4ff] text-[#5b4baf] rounded-full text-sm sm:text-base font-semibold shadow text-center whitespace-nowrap">
+              {/* MATCH BADGE */}
+              <div className="mt-3 sm:mt-0 px-4 py-1 sm:px-6 sm:py-2 bg-[#ebe4ff] text-[#5b4baf] rounded-full text-sm sm:text-base font-semibold shadow text-center whitespace-nowrap">
                 {job.match}% Match
               </div>
             </motion.div>
           ))}
 
-        {/* -------- LEARN SECTION -------- */}
+        {/* LEARN SECTION */}
         {activeTab === "Learn" && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -277,7 +280,7 @@ export default function JobsPage() {
             <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               Improve your skills with curated courses
             </p>
-            <button className="px-6 py-2 sm:px-6 sm:py-3 bg-[#26215f] text-white rounded-xl shadow hover:bg-[#1e1a4c] text-sm sm:text-base">
+            <button className="px-6 py-2 sm:px-6 sm:py-3 bg-[#5b4baf] text-white rounded-xl shadow hover:bg-[#422f9b] text-sm sm:text-base">
               Explore Courses
             </button>
           </motion.div>
