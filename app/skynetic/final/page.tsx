@@ -89,28 +89,31 @@ const SkillRating: React.FC<SkillRatingProps> = ({ name, score, icon: Icon }) =>
   );
 };
 
+interface ItemListCardProps {
+  title: string;
+  items: string[];
+  Icon: React.ElementType;
+  color?: string;
+}
 
-const ItemListCard = ({ title, items, Icon, color }) => {
+const ItemListCard: React.FC<ItemListCardProps> = ({ title, items, Icon, color }) => {
   return (
     <div className={`p-6 md:p-8 ${lightGlass} rounded-[30px] w-full ${hoverEffect}`}>
       <h2 className="text-2xl font-bold mb-5 flex items-center text-gray-800 font-[var(--font-grotesk)]">
-        <Icon className={`w-6 h-6 mr-3 ${color}`} />
+        <Icon className={`w-8 h-8 mr-3 ${color || "text-purple-600"}`} />
         {title}
       </h2>
-      <ul className="space-y-3">
+      <ul className="space-y-2">
         {items.map((item, index) => (
-          <li
-            key={index}
-            className={`flex items-start text-base p-4 rounded-xl bg-white/70 border border-gray-100/50 shadow-sm transition-all duration-300 hover:bg-white`}
-          >
-            <CheckCircle className={`w-5 h-5 mr-3 mt-0.5 flex-shrink-0 ${color}`} />
-            <span className="text-gray-700 font-medium">{item}</span>
+          <li key={index} className="text-gray-600">
+            {item}
           </li>
         ))}
       </ul>
     </div>
   );
 };
+
 
 // --- Main Component ---
 export default function InterviewReportPage() {
