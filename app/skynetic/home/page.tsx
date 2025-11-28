@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-/* -------- Lucide Icons (Only Valid Icons) -------- */
+/* -------- Lucide Icons -------- */
 import {
   Bell,
   User,
@@ -14,7 +14,7 @@ import {
   Clock,
   BookOpen,
   Briefcase,
-  MessageCircle,  // FIXED ICON
+  MessageCircle,
   UsersRound,
 } from "lucide-react";
 
@@ -40,24 +40,39 @@ const grotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
   variable: "--font-grotesk",
 });
-/* ------------------------------------------------ */
+
+/* ---------------- TYPES ---------------- */
+type TabName = "Jobs" | "Interview" | "Network" | "Learn";
+
+interface TabItem {
+  name: TabName;
+  icon: any;
+}
 
 export default function JobsPage() {
   const router = useRouter();
   const pathname = usePathname();
 
   const [query, setQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("Jobs");
+  const [activeTab, setActiveTab] = useState<TabName>("Jobs");
 
-  /* ----------- FIXED TABS (VALID ICONS ONLY) ------------ */
-  const tabs = [
+  /* ----------- FIXED TABS ------------ */
+  const tabs: TabItem[] = [
     { name: "Jobs", icon: Briefcase },
-    { name: "Interview", icon: MessageCircle }, // FIXED
+    { name: "Interview", icon: MessageCircle },
     { name: "Network", icon: UsersRound },
     { name: "Learn", icon: BookOpen },
   ];
 
-  /* ---------------------- INDIAN JOB DATA -------------------- */
+  /* -------- Tab Navigation Routes -------- */
+  const tabRoutes: Record<TabName, string | null> = {
+    Jobs: "/skynetic/jobs",
+    Interview: "/skynetic/interview",
+    Network: "/skynetic/connection",
+    Learn: null,
+  };
+
+  /* ---------------------- JOB DATA -------------------- */
   const jobs = [
     {
       title: "Senior Full Stack Developer",
@@ -101,30 +116,24 @@ export default function JobsPage() {
     },
   ];
 
-  /* -------- Tab Navigation Routes -------- */
-  const tabRoutes = {
-    Jobs: "/skynetic/jobs",
-    Interview: "/skynetic/interview",
-    Network: "/skynetic/connection",
-    Learn: null,
-  };
-
   /* -------- Detect active tab on load -------- */
   useEffect(() => {
-    const foundTab = tabs.find(
-      (tab) =>
-        tabRoutes[tab.name] &&
-        pathname.includes(tabRoutes[tab.name].split("/")[2])
-    );
-    if (foundTab) setActiveTab(foundTab.name);
+    const found = tabs.find((tab) => {
+      const route = tabRoutes[tab.name];
+      return route && pathname.includes(route.split("/")[2]);
+    });
+
+    if (found) setActiveTab(found.name);
   }, [pathname]);
 
-  const handleTabClick = (tab) => {
+  /* -------- Tab Click Handler -------- */
+  const handleTabClick = (tab: TabName) => {
     if (tab === "Learn") {
       setActiveTab("Learn");
-    } else {
-      router.push(tabRoutes[tab]);
+      return;
     }
+    const route = tabRoutes[tab];
+    if (route) router.push(route);
   };
 
   return (
@@ -177,7 +186,7 @@ export default function JobsPage() {
         ))}
       </nav>
 
-      {/* ---------------- SEARCH BAR (Jobs Only) ---------------- */}
+      {/* ---------------- SEARCH BAR ---------------- */}
       {activeTab === "Jobs" && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -254,7 +263,7 @@ export default function JobsPage() {
             </motion.div>
           ))}
 
-        {/* ---------------- LEARN TAB ---------------- */}
+        {/* -------- LEARN SECTION -------- */}
         {activeTab === "Learn" && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -274,7 +283,7 @@ export default function JobsPage() {
           </motion.div>
         )}
 
-        {/* COMING SOON FOR OTHER TABS */}
+        {/* Coming Soon */}
         {activeTab !== "Jobs" && activeTab !== "Learn" && (
           <div className="text-center mt-20 text-gray-600 text-lg">
             {activeTab} section is coming soon!
