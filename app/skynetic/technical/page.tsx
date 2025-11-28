@@ -2,27 +2,38 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, Code, Target, BookOpen, Layers, CheckCircle } from "lucide-react";
+import { ChevronLeft, Code, Layers, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const AssessmentCard = ({
+// --- TYPES ---
+type Difficulty = "Easy" | "Medium" | "Hard";
+type AssessmentStatus = "pending" | "completed";
+
+type Assessment = {
+  id: string;
+  title: string;
+  description: string;
+  questions: number;
+  time: number;
+  difficulty: Difficulty;
+  status: AssessmentStatus;
+};
+
+// --- ASSESSMENT CARD COMPONENT ---
+type AssessmentCardProps = Assessment & {
+  onStartAssessment: () => void;
+};
+
+const AssessmentCard: React.FC<AssessmentCardProps> = ({
   title,
   description,
   questions,
   time,
   difficulty,
-  status, // 'pending' or 'completed'
+  status,
   onStartAssessment,
-}: {
-  title: string;
-  description: string;
-  questions: number;
-  time: number;
-  difficulty: "Easy" | "Medium" | "Hard";
-  status: "pending" | "completed";
-  onStartAssessment: () => void;
 }) => {
-  const difficultyColors = {
+  const difficultyColors: Record<Difficulty, string> = {
     Easy: "bg-green-100 text-green-700 border-green-300",
     Medium: "bg-yellow-100 text-yellow-700 border-yellow-300",
     Hard: "bg-red-100 text-red-700 border-red-300",
@@ -83,17 +94,50 @@ const AssessmentCard = ({
   );
 };
 
-// Initial assessments
-const initialAssessments = [
-  { id: "mcq", title: "MCQ", description: "Multiple choice questions on core concepts", questions: 20, time: 40, difficulty: "Easy", status: "pending" },
-  { id: "pseudocode", title: "Pseudocode", description: "Solve coding pseudocode problems", questions: 15, time: 35, difficulty: "Easy", status: "pending" },
-  { id: "pattern", title: "Pattern Recognition", description: "Identify the correct patterns", questions: 20, time: 40, difficulty: "Medium", status: "pending" },
-  { id: "dsa", title: "DSA", description: "Data Structures & Algorithms", questions: 25, time: 50, difficulty: "Hard", status: "pending" },
+// --- INITIAL ASSESSMENTS ---
+const initialAssessments: Assessment[] = [
+  {
+    id: "mcq",
+    title: "MCQ",
+    description: "Multiple choice questions on core concepts",
+    questions: 20,
+    time: 40,
+    difficulty: "Easy",
+    status: "pending",
+  },
+  {
+    id: "pseudocode",
+    title: "Pseudocode",
+    description: "Solve coding pseudocode problems",
+    questions: 15,
+    time: 35,
+    difficulty: "Easy",
+    status: "pending",
+  },
+  {
+    id: "pattern",
+    title: "Pattern Recognition",
+    description: "Identify the correct patterns",
+    questions: 20,
+    time: 40,
+    difficulty: "Medium",
+    status: "pending",
+  },
+  {
+    id: "dsa",
+    title: "DSA",
+    description: "Data Structures & Algorithms",
+    questions: 25,
+    time: 50,
+    difficulty: "Hard",
+    status: "pending",
+  },
 ];
 
+// --- MAIN PAGE ---
 export default function TechnicalAssessmentPage() {
   const router = useRouter();
-  const [assessments, setAssessments] = useState(initialAssessments);
+  const [assessments, setAssessments] = useState<Assessment[]>(initialAssessments);
 
   const allCompleted = assessments.every((a) => a.status === "completed");
 
@@ -116,30 +160,26 @@ export default function TechnicalAssessmentPage() {
 
   return (
     <div className="min-h-screen w-full font-sans bg-gradient-to-br from-[#f0ebff] via-[#faf8ff] to-white text-gray-900 flex justify-center py-10 px-4 sm:px-6">
-      <div className="w-full max-w-[1600px]"> {/* Full-width for desktop */}
-
+      <div className="w-full max-w-[1600px]">
         {/* HEADER / BACK BUTTON */}
-     <div className="mb-12">
-  {/* Back Button at top */}
-  <button
-    onClick={() => router.push("/skynetic/communication")}
-    className="flex items-center text-base sm:text-sm font-medium text-gray-600 hover:text-[#5b4baf] transition duration-150 p-3 sm:p-4 rounded-md"
-  >
-    <ChevronLeft className="w-5 h-5 mr-2" />
-    Back
-  </button>
+        <div className="mb-12">
+          <button
+            onClick={() => router.push("/skynetic/communication")}
+            className="flex items-center text-base sm:text-sm font-medium text-gray-600 hover:text-[#5b4baf] transition duration-150 p-3 sm:p-4 rounded-md"
+          >
+            <ChevronLeft className="w-5 h-5 mr-2" />
+            Back
+          </button>
 
-  {/* Heading and description below */}
-  <div className="mt-6 sm:mt-10 text-center">
-    <h1 className="text-2xl sm:text-3xl font-bold text-[#26215f]">
-      Technical Assessment
-    </h1>
-    <p className="text-gray-500 mt-2 text-sm sm:text-base">
-      Evaluate your coding skills (50mins)
-    </p>
-  </div>
-</div>
-
+          <div className="mt-6 sm:mt-10 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#26215f]">
+              Technical Assessment
+            </h1>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">
+              Evaluate your coding skills (50mins)
+            </p>
+          </div>
+        </div>
 
         {/* ASSESSMENT GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -174,7 +214,6 @@ export default function TechnicalAssessmentPage() {
               </ul>
             </div>
 
-            {/* Schedule Button */}
             <button
               onClick={() => router.push("/schedule/strategic")}
               className="mt-4 w-full px-6 py-3 bg-[#5b4baf] text-white rounded-xl font-semibold shadow-md hover:bg-[#422f9b] transition"
