@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 
 /* ---------------- GOOGLE FONTS ---------------- */
-// IMPORTANT: Ensure these fonts are imported and configured in your project's layout/config files.
 import { Inter, Urbanist, Space_Grotesk } from "next/font/google";
 
 const inter = Inter({
@@ -40,15 +39,42 @@ const grotesk = Space_Grotesk({
   weight: ["600", "700"],
   variable: "--font-grotesk",
 });
+
 /* ------------------------------------------------ */
 
-// **Helper Classes**
 const lightGlass =
   "bg-white/70 backdrop-blur-2xl border border-white/80 shadow-xl shadow-gray-200/50 transition-all duration-300";
 
-const hoverEffect = "hover:shadow-2xl hover:shadow-purple-200/50 hover:-translate-y-0.5";
+const hoverEffect =
+  "hover:shadow-2xl hover:shadow-purple-200/50 hover:-translate-y-0.5";
 
-// --- Mock Data ---
+// --------------------------------------------------
+// Types
+// --------------------------------------------------
+
+interface CategoryType {
+  name: string;
+  score: number;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+interface ItemListProps {
+  title: string;
+  items: string[];
+  Icon: React.ComponentType<{ className?: string }>;
+  color: string;
+}
+
+interface SkillRatingProps {
+  name: string;
+  score: number;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+// --------------------------------------------------
+// Data
+// --------------------------------------------------
+
 const performanceData = {
   overallScore: 87,
   categories: [
@@ -56,7 +82,7 @@ const performanceData = {
     { name: "Technical Skills", score: 85, icon: Code },
     { name: "Problem Solving", score: 88, icon: Lightbulb },
     { name: "Leadership", score: 82, icon: Users },
-  ],
+  ] as CategoryType[],
   strengths: [
     "Excellent communication skills and clear articulation.",
     "Strong technical knowledge and problem-solving approach.",
@@ -71,9 +97,11 @@ const performanceData = {
   ],
 };
 
-// --- Sub-Components ---
+// --------------------------------------------------
+// Components
+// --------------------------------------------------
 
-const SkillRating = ({ name, score, icon: Icon }) => {
+const SkillRating: React.FC<SkillRatingProps> = ({ name, score, icon: Icon }) => {
   return (
     <div className={`p-4 ${lightGlass} rounded-2xl ${hoverEffect} flex flex-col items-center`}>
       <Icon className="w-8 h-8 mb-2 text-purple-600" />
@@ -84,15 +112,15 @@ const SkillRating = ({ name, score, icon: Icon }) => {
           style={{ width: `${score}%` }}
         ></div>
       </div>
-      <span className="mt-2 text-xl font-bold text-gray-800 font-[var(--font-grotesk)]">{score}%</span>
+      <span className="mt-2 text-xl font-bold text-gray-800">{score}%</span>
     </div>
   );
 };
 
-const ItemListCard = ({ title, items, Icon, color }) => {
+const ItemListCard: React.FC<ItemListProps> = ({ title, items, Icon, color }) => {
   return (
     <div className={`p-6 md:p-8 ${lightGlass} rounded-[30px] w-full ${hoverEffect}`}>
-      <h2 className="text-2xl font-bold mb-5 flex items-center text-gray-800 font-[var(--font-grotesk)]">
+      <h2 className="text-2xl font-bold mb-5 flex items-center text-gray-800">
         <Icon className={`w-6 h-6 mr-3 ${color}`} />
         {title}
       </h2>
@@ -100,7 +128,7 @@ const ItemListCard = ({ title, items, Icon, color }) => {
         {items.map((item, index) => (
           <li
             key={index}
-            className={`flex items-start text-base p-4 rounded-xl bg-white/70 border border-gray-100/50 shadow-sm transition-all duration-300 hover:bg-white`}
+            className="flex items-start text-base p-4 rounded-xl bg-white/70 border border-gray-100/50 shadow-sm hover:bg-white transition-all"
           >
             <CheckCircle className={`w-5 h-5 mr-3 mt-0.5 flex-shrink-0 ${color}`} />
             <span className="text-gray-700 font-medium">{item}</span>
@@ -111,7 +139,10 @@ const ItemListCard = ({ title, items, Icon, color }) => {
   );
 };
 
-// --- Main Component ---
+// --------------------------------------------------
+// Main Page
+// --------------------------------------------------
+
 export default function InterviewReportPage() {
   const primaryColorHex = "#5b4baf";
 
@@ -123,174 +154,117 @@ export default function InterviewReportPage() {
         ${grotesk.variable}
         min-h-screen w-full font-[var(--font-inter)]
         bg-gradient-to-br from-[#f0f4ff] via-[#e6e9ff] to-white text-gray-900
-        py-6 sm:py-10 md:py-12 px-4 sm:px-8 lg:px-16 xl:px-24 
-        relative
+        py-6 sm:py-10 md:py-12 px-4 sm:px-8 lg:px-16 xl:px-24 relative
       `}
     >
-      {/* Decorative Background Blur */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-200/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 z-0"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-200/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 z-0"></div>
+      {/* Background Blur */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl opacity-50"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-200/30 rounded-full blur-3xl opacity-50"></div>
 
-      {/* Content Container (Full Width) */}
       <div className="relative z-10 w-full">
-        
-        {/* Header (Enhanced Home Link) */}
+        {/* Header */}
         <header className="flex justify-between items-center mb-10 md:mb-12">
-          <div className="flex items-center text-gray-600 hover:text-gray-800 transition">
+          <div className="flex items-center text-gray-600">
             <ChevronLeft className="w-6 h-6 mr-2" />
-            <span className="text-2xl font-semibold font-[var(--font-grotesk)]">
-              Interview Report
-            </span>
+            <span className="text-2xl font-semibold">Interview Report</span>
           </div>
-          
-          {/* Enhanced Home Button (Functional Link) */}
-          <Link 
-            href="/skynetic/home" 
-            className="flex items-center text-md font-semibold text-gray-600 hover:text-purple-600 transition p-2 rounded-lg hover:bg-gray-100"
+
+          <Link
+            href="/skynetic/home"
+            className="flex items-center text-md font-semibold text-gray-600 hover:text-purple-600 p-2 rounded-lg hover:bg-gray-100"
           >
             <Home className="w-5 h-5 mr-1" />
             Home
           </Link>
         </header>
 
-        {/* ------------------------------------------------ */}
-        
-        {/* MAIN GRID: items-start fixes the vertical alignment issue for the side column */}
+        {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 md:gap-10 items-start">
-
-          {/* Left/Main Column (Performance, Strengths, Improvement, Actions) - Spans 3/4 */}
-          <div className="lg:col-span-3 space-y-8 md:space-y-10">
-            
-            {/* ## 🏆 Overall Performance */}
+          {/* Main Column */}
+          <div className="lg:col-span-3 space-y-10">
+            {/* Overall Performance */}
             <div
-              className={`
-                p-6 sm:p-10 ${lightGlass}
-                rounded-[30px] text-center
-                border-t-4 border-[${primaryColorHex}]/70
-                ${hoverEffect}
-              `}
+              className={`p-6 sm:p-10 ${lightGlass} rounded-[30px] text-center border-t-4`}
+              style={{ borderColor: primaryColorHex }}
             >
-              {/* Circular Score */}
-              <div className="flex flex-col items-center justify-center mb-6">
-                <div
-                  className={`
-                    w-36 h-36 rounded-full flex items-center justify-center
-                    bg-white/80 border-4 border-purple-500 shadow-inner
-                    relative
-                  `}
-                >
-                  <Star className="w-8 h-8 text-yellow-500 absolute -top-2 -right-2 transform rotate-12" />
-                  <span className="text-5xl font-extrabold text-purple-600 font-[var(--font-grotesk)]">
+              <div className="flex flex-col items-center mb-6">
+                <div className="w-36 h-36 rounded-full bg-white/80 border-4 border-purple-500 flex items-center justify-center relative shadow-inner">
+                  <Star className="w-8 h-8 text-yellow-500 absolute -top-2 -right-2 rotate-12" />
+                  <span className="text-5xl font-extrabold text-purple-600">
                     {performanceData.overallScore}%
                   </span>
                 </div>
-                <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-[var(--font-grotesk)]">
+
+                <h1 className="mt-4 text-4xl font-extrabold text-gray-900">
                   Excellent Performance!
                 </h1>
-                <p className="text-lg text-gray-600 font-medium mt-1">
+                <p className="text-lg text-gray-600">
                   You've demonstrated strong skills across all interview categories.
                 </p>
               </div>
 
-              {/* Skill Ratings Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-8">
+              {/* Skill Ratings */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
                 {performanceData.categories.map((category) => (
                   <SkillRating key={category.name} {...category} />
                 ))}
               </div>
             </div>
-            {/* End Overall Performance */}
-            
-            {/* Strengths & Improvement in a two-column layout on large screens */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-                {/* ## ✅ Strengths */}
-                <ItemListCard
-                  title="Strengths"
-                  items={performanceData.strengths}
-                  Icon={Trophy}
-                  color="text-green-600"
-                />
-                {/* ## ⚠️ Areas for Improvement */}
-                <ItemListCard
-                  title="Areas for Improvement"
-                  items={performanceData.areasForImprovement}
-                  Icon={AlertTriangle}
-                  color="text-yellow-600"
-                />
+
+            {/* Strengths & Improvements */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <ItemListCard
+                title="Strengths"
+                items={performanceData.strengths}
+                Icon={Trophy}
+                color="text-green-600"
+              />
+              <ItemListCard
+                title="Areas for Improvement"
+                items={performanceData.areasForImprovement}
+                Icon={AlertTriangle}
+                color="text-yellow-600"
+              />
             </div>
-            
-            {/* ## ⬇️ Actions (Download/Share) */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-start">
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
-                className={`
-                  flex items-center justify-center px-8 py-3 rounded-full
-                  bg-[#26215f] text-white font-semibold text-lg
-                  shadow-lg shadow-[#26215f]/40 transition-all duration-300
-                  hover:bg-[#1e1a4c] hover:shadow-xl hover:-translate-y-1
-                  font-[var(--font-urbanist)]
-                `}
+                className="flex items-center justify-center px-8 py-3 rounded-full bg-[#26215f] text-white font-semibold text-lg shadow-lg hover:shadow-xl hover:bg-[#1e1a4c] transition-all"
               >
                 <Download className="w-5 h-5 mr-2" />
                 Download Report
               </button>
               <button
-                className={`
-                  flex items-center justify-center px-8 py-3 rounded-full
-                  bg-white text-gray-700 font-semibold text-lg border border-gray-300
-                  shadow-md transition-all duration-300
-                  hover:bg-gray-100 hover:shadow-lg hover:border-gray-400
-                  font-[var(--font-urbanist)]
-                `}
+                className="flex items-center justify-center px-8 py-3 rounded-full bg-white text-gray-700 border border-gray-300 font-semibold text-lg shadow-md hover:bg-gray-100 hover:shadow-lg transition-all"
               >
                 <Share2 className="w-5 h-5 mr-2" />
                 Share with Recruiter
               </button>
             </div>
-            {/* End Actions */}
           </div>
 
-          {/* Right Column ("What's Next?") - Spans 1/4, now aligned correctly */}
-          <div className="lg:col-span-1 **self-stretch**"> 
+          {/* Right Column */}
+          <div className="lg:col-span-1 self-stretch">
             <div
-              className={`
-                p-6 sm:p-8 ${lightGlass} rounded-[30px] **h-full**
-                text-center border-t-4 border-blue-400/70
-                ${hoverEffect}
-                
-                /* FIX: Added flex-col and justify-between */
-                **flex flex-col justify-between** `}
+              className={`p-6 sm:p-8 ${lightGlass} rounded-[30px] h-full flex flex-col justify-between`}
             >
-              {/* Top Content (Title, Paragraph) */}
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 font-[var(--font-grotesk)] mb-2">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
                   🚀 What's Next?
                 </h2>
-                <p className="text-md text-gray-600 font-medium mb-6">
+                <p className="text-md text-gray-600 mb-6">
                   Level up on completing your interview! Continue building your network and exploring opportunities.
                 </p>
               </div>
 
-              {/* Bottom Content (Buttons) - Automatically pushed to the bottom by justify-between */}
-              <div className="flex flex-col gap-4"> 
-                <button
-                  className={`
-                    flex items-center justify-center w-full px-6 py-3 rounded-full
-                    bg-blue-500 text-white font-semibold shadow-lg shadow-blue-500/30
-                    transition-all duration-300 hover:bg-blue-600 hover:shadow-xl hover:-translate-y-0.5
-                    text-lg
-                  `}
-                >
+              <div className="flex flex-col gap-4">
+                <button className="w-full px-6 py-3 rounded-full bg-blue-500 text-white font-semibold shadow-lg hover:bg-blue-600 hover:shadow-xl transition-all">
                   <Briefcase className="w-5 h-5 mr-2" />
                   Browse New Jobs
                 </button>
-                <button
-                  className={`
-                    flex items-center justify-center w-full px-6 py-3 rounded-full
-                    bg-purple-500 text-white font-semibold shadow-lg shadow-purple-500/30
-                    transition-all duration-300 hover:bg-purple-600 hover:shadow-xl hover:-translate-y-0.5
-                    text-lg
-                  `}
-                >
+
+                <button className="w-full px-6 py-3 rounded-full bg-purple-500 text-white font-semibold shadow-lg hover:bg-purple-600 hover:shadow-xl transition-all">
                   <Globe className="w-5 h-5 mr-2" />
                   Grow Your Network
                 </button>
@@ -298,7 +272,7 @@ export default function InterviewReportPage() {
             </div>
           </div>
         </div>
-        {/* ------------------------------------------------ */}
+        {/* End Grid */}
       </div>
     </div>
   );
