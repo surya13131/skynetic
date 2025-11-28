@@ -1,15 +1,16 @@
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import { Search, User, MapPin, Users, CheckCircle2, Clock, Star } from "lucide-react";
 import { Inter, Urbanist, Space_Grotesk } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300","400","500","600","700"], variable:"--font-inter" });
-const urbanist = Urbanist({ subsets:["latin"], weight:["500","600","700","800"], variable:"--font-urbanist" });
-const grotesk = Space_Grotesk({ subsets:["latin"], weight:["400","500","600","700"], variable:"--font-grotesk" });
+const urbanist = Urbanist({ subsets: ["latin"], weight: ["500","600","700","800"], variable:"--font-urbanist" });
+const grotesk = Space_Grotesk({ subsets: ["latin"], weight: ["400","500","600","700"], variable:"--font-grotesk" });
 
 // ----------------------
-// TAB TYPE FIX
+// TAB TYPE
 // ----------------------
 type TabType = "All Connections" | "Connected" | "Pending" | "Suggested";
 
@@ -33,7 +34,8 @@ export default function NetworkPage() {
   };
 
   const filteredConnections = connections.filter((conn) => {
-    const matchesFilter = filter === "All Connections" ? true : conn.status === filter.toLowerCase();
+    const matchesFilter =
+      filter === "All Connections" ? true : conn.status === filter.toLowerCase();
     const matchesQuery =
       conn.name.toLowerCase().includes(query.toLowerCase()) ||
       conn.company.toLowerCase().includes(query.toLowerCase()) ||
@@ -45,7 +47,7 @@ export default function NetworkPage() {
   // -------------------------
   // FIXED ICON OBJECT
   // -------------------------
-  const filterIcons: Record<TabType, JSX.Element> = {
+  const filterIcons: Record<TabType, React.ReactNode> = {
     "All Connections": <Users className="w-5 h-5" />,
     Connected: <CheckCircle2 className="w-5 h-5" />,
     Pending: <Clock className="w-5 h-5" />,
@@ -118,11 +120,7 @@ export default function NetworkPage() {
               rounded-2xl font-[var(--font-urbanist)] transition-all transform shadow-md
               backdrop-blur-xl border border-white/20
               hover:scale-110 hover:bg-white/50
-              ${
-                filter === tab
-                  ? "bg-[#5b4baf] text-white shadow-lg"
-                  : "bg-white/40 text-gray-800"
-              }`}
+              ${filter === tab ? "bg-[#5b4baf] text-white shadow-lg" : "bg-white/40 text-gray-800"}`}
           >
             <div className="mb-1">{filterIcons[tab as TabType]}</div>
             <span className="text-xs sm:text-sm font-semibold">{tab}</span>
