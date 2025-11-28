@@ -8,9 +8,15 @@ const inter = Inter({ subsets: ["latin"], weight: ["300","400","500","600","700"
 const urbanist = Urbanist({ subsets:["latin"], weight:["500","600","700","800"], variable:"--font-urbanist" });
 const grotesk = Space_Grotesk({ subsets:["latin"], weight:["400","500","600","700"], variable:"--font-grotesk" });
 
+// ----------------------
+// FIX TYPE ERROR
+// ----------------------
+
+type TabType = "All Connections" | "Connected" | "Pending" | "Suggested";
+
 export default function NetworkPage() {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("All Connections");
+  const [filter, setFilter] = useState<TabType>("All Connections");
 
   const connections = [
     { name: "Arun Kumar", title: "Software Engineer", company: "TCS", location: "Chennai, TN", status: "connected", connections: 420 },
@@ -29,17 +35,23 @@ export default function NetworkPage() {
 
   const filteredConnections = connections.filter((conn) => {
     const matchesFilter = filter === "All Connections" ? true : conn.status === filter.toLowerCase();
-    const matchesQuery = conn.name.toLowerCase().includes(query.toLowerCase()) ||
+    const matchesQuery =
+      conn.name.toLowerCase().includes(query.toLowerCase()) ||
       conn.company.toLowerCase().includes(query.toLowerCase()) ||
       conn.title.toLowerCase().includes(query.toLowerCase());
+
     return matchesFilter && matchesQuery;
   });
 
-  const filterIcons = {
+  // ----------------------
+  // FIXED ICON OBJECT WITH TYPE
+  // ----------------------
+
+  const filterIcons: Record<TabType, JSX.Element> = {
     "All Connections": <Users className="w-5 h-5" />,
-    "Connected": <CheckCircle2 className="w-5 h-5" />,
-    "Pending": <Clock className="w-5 h-5" />,
-    "Suggested": <Star className="w-5 h-5" />,
+    Connected: <CheckCircle2 className="w-5 h-5" />,
+    Pending: <Clock className="w-5 h-5" />,
+    Suggested: <Star className="w-5 h-5" />,
   };
 
   return (
@@ -92,14 +104,14 @@ export default function NetworkPage() {
         {Object.keys(filterIcons).map((tab, i) => (
           <button
             key={i}
-            onClick={() => setFilter(tab)}
+            onClick={() => setFilter(tab as TabType)}
             className={`flex flex-col items-center justify-center px-4 py-3 sm:px-6 sm:py-4
               rounded-2xl font-[var(--font-urbanist)] transition-all transform shadow-md
               backdrop-blur-xl border border-white/20
               hover:scale-110 hover:bg-white/50
               ${filter === tab ? "bg-[#5b4baf] text-white shadow-lg" : "bg-white/40 text-gray-800"}`}
           >
-            <div className="mb-1">{filterIcons[tab]}</div>
+            <div className="mb-1">{filterIcons[tab as TabType]}</div>
             <span className="text-xs sm:text-sm font-semibold">{tab}</span>
           </button>
         ))}
@@ -133,7 +145,7 @@ export default function NetworkPage() {
               </div>
 
               <div className="flex flex-col sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-                {/* Connected Button Purple */}
+
                 {conn.status === "connected" && (
                   <button className="w-full sm:w-auto px-4 py-2 min-w-[120px] rounded-xl 
                     bg-[#5b4baf] text-white font-[var(--font-urbanist)] shadow-md
@@ -142,7 +154,6 @@ export default function NetworkPage() {
                   </button>
                 )}
 
-                {/* Pending Button */}
                 {conn.status === "pending" && (
                   <button className="w-full sm:w-auto px-4 py-2 min-w-[120px] rounded-xl 
                     bg-gray-200 text-gray-700 font-[var(--font-urbanist)] cursor-not-allowed truncate">
@@ -150,7 +161,6 @@ export default function NetworkPage() {
                   </button>
                 )}
 
-                {/* Suggested Button */}
                 {conn.status === "suggested" && (
                   <button className="w-full sm:w-auto px-4 py-2 min-w-[120px] rounded-xl 
                     bg-white/30 backdrop-blur-lg border border-white/30 shadow-md text-[#5b4baf] 
