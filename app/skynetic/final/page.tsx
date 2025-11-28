@@ -73,21 +73,22 @@ const performanceData = {
 
 // --- Sub-Components ---
 
-const SkillRating = ({ name, score, icon: Icon }) => {
+interface SkillRatingProps {
+  name: string;
+  score: number;
+  icon: React.ElementType; // React component for icon
+}
+
+const SkillRating: React.FC<SkillRatingProps> = ({ name, score, icon: Icon }) => {
   return (
     <div className={`p-4 ${lightGlass} rounded-2xl ${hoverEffect} flex flex-col items-center`}>
       <Icon className="w-8 h-8 mb-2 text-purple-600" />
-      <span className="text-base font-semibold text-gray-700">{name}</span>
-      <div className="w-full h-3 bg-gray-200 rounded-full mt-2">
-        <div
-          className="h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
-          style={{ width: `${score}%` }}
-        ></div>
-      </div>
-      <span className="mt-2 text-xl font-bold text-gray-800 font-[var(--font-grotesk)]">{score}%</span>
+      <p className="font-semibold">{name}</p>
+      <p className="text-gray-500">{score}%</p>
     </div>
   );
 };
+
 
 const ItemListCard = ({ title, items, Icon, color }) => {
   return (
