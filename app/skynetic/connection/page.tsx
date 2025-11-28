@@ -1,8 +1,16 @@
 "use client";
 
-import React from "react";
-import { useState } from "react";
-import { Search, User, MapPin, Users, CheckCircle2, Clock, Star } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Search,
+  User,
+  MapPin,
+  Users,
+  CheckCircle2,
+  Clock,
+  Star,
+} from "lucide-react";
+
 import { Inter, Urbanist, Space_Grotesk } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300","400","500","600","700"], variable:"--font-inter" });
@@ -18,6 +26,9 @@ export default function NetworkPage() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<TabType>("All Connections");
 
+  // ----------------------
+  // CONNECTION LIST
+  // ----------------------
   const connections = [
     { name: "Arun Kumar", title: "Software Engineer", company: "TCS", location: "Chennai, TN", status: "connected", connections: 420 },
     { name: "Priya Shankar", title: "UI/UX Designer", company: "Zoho Corp", location: "Salem, TN", status: "pending", connections: 310 },
@@ -27,25 +38,17 @@ export default function NetworkPage() {
     { name: "Harini Raj", title: "Frontend Developer", company: "Freshworks", location: "Chennai, TN", status: "connected", connections: 380 },
   ];
 
-  const statusStyles = {
+  // -------------------------
+  // FIXED STATUS MAP (NO TS ERROR)
+  // -------------------------
+  const statusStyles: Record<string, string> = {
     connected: "bg-[#ebe4ff] text-[#5b4baf]",
     pending: "bg-yellow-100 text-yellow-800",
     suggested: "bg-green-100 text-green-800",
   };
 
-  const filteredConnections = connections.filter((conn) => {
-    const matchesFilter =
-      filter === "All Connections" ? true : conn.status === filter.toLowerCase();
-    const matchesQuery =
-      conn.name.toLowerCase().includes(query.toLowerCase()) ||
-      conn.company.toLowerCase().includes(query.toLowerCase()) ||
-      conn.title.toLowerCase().includes(query.toLowerCase());
-
-    return matchesFilter && matchesQuery;
-  });
-
   // -------------------------
-  // FIXED ICON OBJECT
+  // FIXED ICON MAP (NO TS ERROR)
   // -------------------------
   const filterIcons: Record<TabType, React.ReactNode> = {
     "All Connections": <Users className="w-5 h-5" />,
@@ -54,11 +57,27 @@ export default function NetworkPage() {
     Suggested: <Star className="w-5 h-5" />,
   };
 
+  // FILTER OUTPUT
+  const filteredConnections = connections.filter((conn) => {
+    const matchesFilter =
+      filter === "All Connections" ? true : conn.status === filter.toLowerCase();
+
+    const q = query.toLowerCase();
+
+    const matchesQuery =
+      conn.name.toLowerCase().includes(q) ||
+      conn.company.toLowerCase().includes(q) ||
+      conn.title.toLowerCase().includes(q);
+
+    return matchesFilter && matchesQuery;
+  });
+
   return (
     <div
       className={`${inter.variable} ${urbanist.variable} ${grotesk.variable} min-h-screen w-full 
       bg-gradient-to-br from-[#f5f3ff] via-[#ece8ff] to-white text-gray-900 px-4 sm:px-6 lg:px-12`}
     >
+
       {/* HEADER */}
       <header className="w-full flex justify-between items-center py-4">
         <div className="flex items-center gap-2 animate-bounce">
@@ -67,10 +86,8 @@ export default function NetworkPage() {
             My Network
           </span>
         </div>
-        <User
-          className="w-8 h-8 p-1.5 rounded-2xl border border-white/30
-          backdrop-blur-xl hover:scale-110 transition cursor-pointer"
-        />
+
+        <User className="w-8 h-8 p-1.5 rounded-2xl border border-white/30 backdrop-blur-xl hover:scale-110 transition cursor-pointer" />
       </header>
 
       {/* STATS */}
@@ -122,13 +139,13 @@ export default function NetworkPage() {
               hover:scale-110 hover:bg-white/50
               ${filter === tab ? "bg-[#5b4baf] text-white shadow-lg" : "bg-white/40 text-gray-800"}`}
           >
-            <div className="mb-1">{filterIcons[tab as TabType]}</div>
+            <div className="mb-1">{filterIcons[tab]}</div>
             <span className="text-xs sm:text-sm font-semibold">{tab}</span>
           </button>
         ))}
       </div>
 
-      {/* CONNECTION CARDS */}
+      {/* CONNECTION LIST */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
         {filteredConnections.length === 0 ? (
           <p className="col-span-full text-center text-gray-500">No connections found.</p>
@@ -140,6 +157,7 @@ export default function NetworkPage() {
                 shadow-md p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center 
                 hover:bg-white hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] transition"
             >
+              {/* LEFT SECTION */}
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <div
                   className="w-12 h-12 bg-[#5b4baf] text-white flex items-center justify-center 
@@ -160,6 +178,7 @@ export default function NetworkPage() {
                 </div>
               </div>
 
+              {/* RIGHT BUTTONS */}
               <div className="flex flex-col sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
                 {conn.status === "connected" && (
                   <button
@@ -192,7 +211,7 @@ export default function NetworkPage() {
 
                 <span
                   className={`px-3 py-1 text-xs rounded-full font-semibold 
-                  ${statusStyles[conn.status]} truncate`}
+                  ${statusStyles[conn.status] || "bg-gray-200 text-gray-700"} truncate`}
                 >
                   {conn.status}
                 </span>
