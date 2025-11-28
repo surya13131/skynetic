@@ -195,34 +195,7 @@ export default function InterviewSetup() {
       </div>
 
       {/* Footer Feature Boxes */}
-      <div
-        className="
-          w-full grid grid-cols-1 sm:grid-cols-3 gap-4
-          mt-12 px-2
-        "
-        style={{ maxWidth: "850px" }}
-      >
-        <div className="bg-white/70 backdrop-blur-xl border p-6 rounded-2xl text-center shadow-md">
-          <h3 className="font-semibold text-[#2d2b60]">AI-Powered</h3>
-          <p className="text-gray-500 text-sm mt-2">
-            Smart questioning based on your responses
-          </p>
-        </div>
-
-        <div className="bg-white/70 backdrop-blur-xl border p-6 rounded-2xl text-center shadow-md">
-          <h3 className="font-semibold text-[#2d2b60]">Real-time Feedback</h3>
-          <p className="text-gray-500 text-sm mt-2">
-            Instant evaluation & suggestions
-          </p>
-        </div>
-
-        <div className="bg-white/70 backdrop-blur-xl border p-6 rounded-2xl text-center shadow-md">
-          <h3 className="font-semibold text-[#2d2b60]">Detailed Report</h3>
-          <p className="text-gray-500 text-sm mt-2">
-            Comprehensive analysis after completion
-          </p>
-        </div>
-      </div>
+    
     </div>
   );
 }
